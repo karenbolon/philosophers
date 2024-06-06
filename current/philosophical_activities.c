@@ -6,13 +6,13 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:52:01 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/06 08:46:59 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 10:09:12 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	philo_is_eating(t_philo *philo)
+/*void	philo_is_eating(t_philo *philo)
 {
 	print_message(philo, "is eating");
 	pthread_mutex_lock(&philo->table->table_mutex);
@@ -28,6 +28,21 @@ void	philo_is_eating(t_philo *philo)
 	pthread_mutex_unlock(&philo->table->table_mutex);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
+}*/
+
+void philo_is_eating(t_philo *philo)
+{
+    print_message(philo, "is eating");
+    pthread_mutex_lock(&philo->table->table_mutex);
+    philo->time_since_last_meal = ft_timestamp();
+    pthread_mutex_unlock(&philo->table->table_mutex);
+    usleep(philo->time_to_eat * 1000);
+    pthread_mutex_lock(&philo->table->table_mutex);
+    if (philo->meals_eaten != -1)
+        philo->meals_eaten++;
+    pthread_mutex_unlock(&philo->table->table_mutex);
+    pthread_mutex_unlock(philo->left_fork);
+    pthread_mutex_unlock(philo->right_fork);
 }
 
 void	philo_is_sleeping(int time, t_philo *philo)

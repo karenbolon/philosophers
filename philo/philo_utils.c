@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 16:40:31 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/05 20:50:26 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/05 08:55:51 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ int	ft_timestamp(void)
 }
 
 /*
-print message checks if philo is dead
+print message checks if philo is dead and if so, prints
+message in red
 */
 void	print_message(t_philo *philo, char *s)
 {
+	
 	if (!(philosopher_is_dead(philo)))
 	{
 		pthread_mutex_lock(&philo->table->table_mutex);
@@ -43,7 +45,7 @@ void	print_message(t_philo *philo, char *s)
 	if (philosopher_is_dead(philo))
 	{
 		pthread_mutex_lock(&philo->table->table_mutex);
-		printf("%i %i %s\n", ft_timestamp() + 1 - \
+		printf("%s %i %i %s\n", RED, ft_timestamp() - \
 			philo->table->start_time, philo->id, s);
 		pthread_mutex_unlock(&(philo->table->table_mutex));
 	}

@@ -1,31 +1,6 @@
-
-typedef struct s_philo
-{
-	int					id;
-	int					time_since_last_meal;
-	int					time_to_die;
-	int					time_to_sleep;
-	int					time_to_eat;
-	int					meals_eaten;
-	pthread_t			thread_id;
-	struct s_table		*table;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*right_fork;
-}	t_philo;
-
-typedef struct s_table
-{
-	int					number_of_philosophers;
-	int					total_meals_to_eat;
-	int					start_time;
-	int					is_dead;
-	int					is_full;
-	pthread_mutex_t		*fork_mutex;
-	pthread_mutex_t		table_mutex;
-	t_philo				*philos;
-}	t_table;	
-
-
+/*
+struct initialises philosopher structs and fills variables
+*/
 int	init_philosophers(t_table *table, char **list)
 {
 	int		i;
@@ -53,8 +28,7 @@ int	init_philosophers(t_table *table, char **list)
 }
 
 /*
-struct initialises table struct and fills variables
-"sets the table and lays the forks"
+struct initialises rable struct and fills variables
 */
 int	init_structs(t_table *table, char **list)
 {
@@ -68,7 +42,6 @@ int	init_structs(t_table *table, char **list)
 		table->total_meals_to_eat = -1;
 	table->is_dead = 0;
 	table->is_full = 0;
-	table->start_time = ft_timestamp();
 	table->fork_mutex = malloc(sizeof(pthread_mutex_t) * \
 		table->number_of_philosophers);
 	if (!table->fork_mutex)
@@ -98,7 +71,7 @@ void	begin_routine(t_table *table)
 	int	i;
 
 	i = 0;
-//	table->start_time = ft_timestamp();
+	table->start_time = ft_timestamp();
 	while (i < table->number_of_philosophers)
 	{
 		pthread_create(&table->philos[i].thread_id, NULL,
@@ -113,6 +86,9 @@ void	begin_routine(t_table *table)
 	}
 }
 
+/*
+checks if a philosopher has died and if so, prints it in red to see easier
+*/
 int	check_for_dead_philos(t_table *table)
 {
 	int		i;
@@ -152,13 +128,7 @@ int	check_all_philosophers_done(t_table *table)
 	}
 	return (1);
 }
-/*
-checks if philospher is dead or all have reached the specified
-number of meals have been reached.
 
-Table mutex prevents data races/protects code and ensures shared variables
-are properly updated, such as: table->is_dead and table->is_full
-*/
 void	*begin_monitoring(void *arg)
 {
 	t_table	*table;
@@ -169,7 +139,7 @@ void	*begin_monitoring(void *arg)
 		pthread_mutex_lock(&table->table_mutex);
 		if (check_for_dead_philos(table) == 0)
 		{
-//			usleep(500);
+			usleep(500);
 			pthread_mutex_unlock(&table->table_mutex);
 			return (NULL);
 		}
@@ -181,18 +151,11 @@ void	*begin_monitoring(void *arg)
 			return (NULL);
 		}
 		pthread_mutex_unlock(&table->table_mutex);
-		usleep(50);//was 0000
+		usleep(1000);
 	}
 	return (NULL);
 }
 
-/*
-this functions tells the philosopher what to do and checks
-if they died inbetween actions
-
-forks must be locked before a philo can "pick up" and use, and unlock when
-"put down".  This prevents philos from using same forks
-*/
 void	*philosophers_routine(void *arguments)
 {
 	t_philo	*philo;
@@ -202,8 +165,8 @@ void	*philosophers_routine(void *arguments)
 	{
 		if (philosopher_is_dead(philo))
 			return (0);
-//		if (!check_for_one_philo(philo))
-//			return (0);
+		if (!check_for_one_philo(philo))
+			return (0);
 		philosopher_takes_forks(philo);
 		if (philosopher_is_dead(philo))
 		{
@@ -227,15 +190,19 @@ int	check_for_one_philo(t_philo *philo)
 	if (philo->table->number_of_philosophers == 1)
 	{
 		print_message(philo, "has taken a fork");
-		pthread_mutex_lock(&philo->table->table_mutex);
+		philo_is_sleeping(philo->time_to_die + 1, philo);
 		philo->table->is_dead = 1;
-		pthread_mutex_unlock(&philo->table->table_mutex);
 		print_message(philo, "died");
 		return (0);
 	}
 	return (1);
 }
 
+/*
+fcn gets the time, fills a time struct: tv_sec->seconds, tv_usec->milliseconds
+we need to convert to add together
+gettimeofday returns 0 if successful
+*/
 int	ft_timestamp(void)
 {
 	int					time;
@@ -262,8 +229,7 @@ void	print_message(t_philo *philo, char *s)
 	}
 	if (philosopher_is_dead(philo))
 	{
-		pthread_mutex_lock(&philo->table->table_mutex);
-		printf("%s %i %i %s\n", RED, ft_timestamp() + 1 - \
+		printf("%s %i %i %s\n", RED, ft_timestamp() - \
 			philo->table->start_time, philo->id, s);
 		pthread_mutex_unlock(&(philo->table->table_mutex));
 	}
