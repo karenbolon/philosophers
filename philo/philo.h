@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 09:08:02 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/06 10:46:22 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 18:58:14 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,28 +29,32 @@
 typedef struct s_philo
 {
 	int					id;
-	int					time_since_last_meal;
+	int					eating;
+	int					meals_eaten;
+	int					last_meal;
 	int					time_to_die;
 	int					time_to_sleep;
 	int					time_to_eat;
-	int					meals_eaten;
-	pthread_t			thread_id;
-	struct s_table		*table;
-	pthread_mutex_t		*left_fork;
-	pthread_mutex_t		*right_fork;
+	int					start_time;
+	int					num_of_philos;
+	int					num_times_to_eat;
+	int					*dead;
+	pthread_t			thread;
+	pthread_mutex_t		*l_fork;
+	pthread_mutex_t		*r_fork;
+	pthread_mutex_t		*write_lock;
+	pthread_mutex_t		*dead_lock;
+	pthread_mutex_t		*meal_lock;
 }	t_philo;
 
-typedef struct s_table
+typedef struct s_program
 {
-	int					number_of_philosophers;
-	int					total_meals_to_eat;
-	int					start_time;
-	int					is_dead;
-	int					is_full;
-	pthread_mutex_t		*fork_mutex;
-	pthread_mutex_t		table_mutex;
-	t_philo				*philos;
-}	t_table;
+	int				dead_flag;
+	pthread_mutex_t	dead_lock;
+	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	write_lock;
+	t_philo			*philos;
+}	t_program;
 
 //arg_checker.c
 int		check_input(char **list);
@@ -60,29 +64,38 @@ int		ft_atoi(const char *str);
 long	ft_atol(const char *str);
 
 //init.c
-int		init_philosophers(t_table *table, char **list);
-int		init_structs(t_table *table, char **list);
-void	join_threads(t_table *table);
-void	begin_routine(t_table *table);
-void	one_philo_found(t_table *table);
-
-//philo_utils.c
-int		ft_timestamp(void);
-void	print_message(t_philo *philo, char *s);
-void	freedom_function(t_table *table);
+void	init_input(t_philo *philos, char **list);
+void	init_philos(t_philo *philos, t_program *program, 
+			pthread_mutex_t *forks, char **list);
+void	init_forks(pthread_mutex_t *forks, int count, int i);
+void	init_program(t_program *program, t_philo *philos);
+int		thread_create(t_program *program, pthread_mutex_t *forks);
 
 //monitor.c
-int		check_for_dead_philos(t_table *table);
-int		check_all_philosophers_done(t_table *table);
-void	*begin_monitoring(void *arg);
-void	*philosophers_routine(void *arguments);
-int		check_for_one_philo(t_philo *philo);
+int		philosopher_dead(t_philo *philo, int time_to_die);
+int		check_if_dead(t_philo *philos);
+int		check_if_all_full(t_philo *philos);
+void	*ft_monitor(void *arg);
+int		dead_loop(t_philo *philo);
+
+//philo_utils.c
+int		ft_usleep(int time);
+int		ft_timestamp(void);
+void	print_message(char *s, t_philo *philo);
+int		ft_strlen(char *str);
+void	ft_exit(t_program *program, pthread_mutex_t *forks);
+
+//program.c
+int		philosopher_dead(t_philo *philo, int time_to_die);
+int		check_if_dead(t_philo *philos);
+int		check_if_all_full(t_philo *philos);
+void	*ft_program(void *arg);
+int		dead_loop(t_philo *philo);
 
 //philosophical_activities.c
 void	philo_is_eating(t_philo *philo);
-void	philo_is_sleeping(int time, t_philo *philo);
-int		philosopher_is_dead(t_philo *philo);
-int		philosopher_takes_forks(t_philo *philo);
-int		odd_philosophers(t_philo *philo);
+void	ft_eat_more(t_philo *philo, pthread_mutex_t	*first_fork, 
+			pthread_mutex_t *second_fork);
+void	*philo_routine(void *arg);
 
 #endif

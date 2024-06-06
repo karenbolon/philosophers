@@ -6,17 +6,15 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 16:40:31 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/05 08:55:51 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 18:43:32 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-/*
-fcn gets the time, fills a time struct: tv_sec->seconds, tv_usec->milliseconds
-we need to convert to add together
-gettimeofday returns 0 if successful
-*/
+//fcn gets the time, fills a time struct: tv_sec->seconds, tv_usec->milliseconds
+//we need to convert to add together
+//gettimeofday returns 0 if successful
 int	ft_timestamp(void)
 {
 	int					time;
@@ -28,33 +26,50 @@ int	ft_timestamp(void)
 	return (time);
 }
 
-/*
-print message checks if philo is dead and if so, prints
-message in red
-*/
-void	print_message(t_philo *philo, char *s)
+int	ft_usleep(int time)
 {
-	
-	if (!(philosopher_is_dead(philo)))
-	{
-		pthread_mutex_lock(&philo->table->table_mutex);
-		printf("%i %i %s\n", ft_timestamp() - \
-			philo->table->start_time, philo->id, s);
-		pthread_mutex_unlock(&(philo->table->table_mutex));
-	}
-	if (philosopher_is_dead(philo))
-	{
-		pthread_mutex_lock(&philo->table->table_mutex);
-		printf("%s %i %i %s\n", RED, ft_timestamp() - \
-			philo->table->start_time, philo->id, s);
-		pthread_mutex_unlock(&(philo->table->table_mutex));
-	}
+	int	start;
+
+	start = ft_timestamp();
+	while ((ft_timestamp() - start) < time)
+		usleep(500);
+	return (0);
 }
 
-void	freedom_function(t_table *table)
+//print message checks if philo is dead and if so, prints
+//message in red
+void	print_message(char *s, t_philo *philo)
 {
-	if (table->philos)
-		free(table->philos);
-	if (table->fork_mutex)
-		free(table->fork_mutex);
+	int	time;
+
+	pthread_mutex_lock(philo->write_lock);
+	time = ft_timestamp() - philo->start_time;
+	if (!dead_loop(philo))
+		printf("%i %i %s\n", time, philo->id, s);
+	pthread_mutex_unlock(philo->write_lock);
+}
+
+int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+void	ft_exit(t_table *table, pthread_mutex_t *forks)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy(&table->write_lock);
+	pthread_mutex_destroy(&table->table_lock);
+	pthread_mutex_destroy(&table->dead_lock);
+	while (i < table->philos[0].total_philos)
+	{
+		pthread_mutex_destroy(&forks[i]);
+		i++;
+	}
 }

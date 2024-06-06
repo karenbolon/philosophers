@@ -6,17 +6,19 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 11:51:15 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/06 10:47:01 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 19:04:23 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+
 int	main(int ac, char **av)
 {
-	char		**list;
-	t_table		table;
-	pthread_t	monitor_thread;
+	char			**list;
+	t_program		program;
+	t_philo			philos[MAX_PHIL];
+	pthread_mutex_t	forks[MAX_PHIL];
 
 	list = NULL;
 	if (ac < 5 || ac > 6)
@@ -27,17 +29,10 @@ int	main(int ac, char **av)
 	list = av + 1;
 	if (ft_check_args(list) == 1)
 		return (1);
-	if (ft_atoi(list[0]) == 1)
-	{
-		one_philo_found(&table);
-		return (1);
-	}
-	if (init_structs(&table, list) == 0)
-		return (1);
-	pthread_create(&monitor_thread, NULL, &begin_monitoring, (void *)&table);
-	begin_routine(&table);
-	pthread_join(monitor_thread, NULL);
-	join_threads(&table);
-	freedom_function(&table);
+	init_program(&program, philos);
+	init_forks(forks, ft_atoi(list[0]), 0);
+	init_philos(philos, &program, forks, list);
+	thread_create(&program, forks);
+	ft_exit(&program, forks);
 	return (0);
 }
