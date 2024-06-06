@@ -6,7 +6,7 @@
 #    By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 10:16:23 by kbolon            #+#    #+#              #
-#    Updated: 2024/06/05 08:57:14 by kbolon           ###   ########.fr        #
+#    Updated: 2024/06/06 22:09:06 by kbolon           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ SRCS = 	philo.c \
 
 CC = cc -pthread -g
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address #-fsanitize=thread
 
 all: $(NAME)
 
