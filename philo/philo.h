@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 09:08:02 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/06 22:53:40 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 23:13:35 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <limits.h>
-
-# define RED "\033[1;31m"
 
 # ifndef MAX_PHIL
 #  define MAX_PHIL 200
@@ -99,12 +97,12 @@ void	*ft_monitor(void *arg);
 int		dead_loop(t_philo *philo);
 
 //philosophical_activities.c
-void	philo_is_eating(t_philo *philo);
+void	philo_is_eating(t_philo *philo);*/
 void	ft_eat_more(t_philo *philo, pthread_mutex_t	*first_fork, 
 			pthread_mutex_t *second_fork);
+/*
 void	*philo_routine(void *arg);
-void	think(t_philo *philo);
-void	dream(t_philo *philo);*/
+*/
 
 // Main functions
 int					check_arg_content(char *arg);
@@ -126,19 +124,13 @@ void				*philo_routine(void *pointer);
 
 // Actions
 void				eat(t_philo *philo);
-void				dream(t_philo *philo);
-void				think(t_philo *philo);
+//void				dream(t_philo *philo);
+//void				think(t_philo *philo);
 
 // Monitor utils
 int					dead_loop(t_philo *philo);
 int					check_if_all_ate(t_philo *philos);
 int					check_if_dead(t_philo *philos);
 int					philosopher_dead(t_philo *philo, int time_to_die);
-
-// Utils
-//int					ft_usleep(int microseconds);
-//int					ft_strlen(char *str);
-//void				print_message(char *str, t_philo *philo, int id);
-//int					get_current_time(void);
 
 #endif

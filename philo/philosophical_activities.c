@@ -6,13 +6,13 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:52:01 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/06 22:53:49 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/06 23:15:33 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-/*void	philo_is_eating(t_philo *philo)
+/*void	eat(t_philo *philo)
 {
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
@@ -51,48 +51,10 @@ void	ft_eat_more(t_philo *philo, pthread_mutex_t	*first_fork, \
 	ft_usleep(philo->time_to_eat);
 	pthread_mutex_unlock(second_fork);
 	pthread_mutex_unlock(first_fork);
-}*/
-
-void	think(t_philo *philo)
-{
-	print_message("is thinking", philo, philo->id);
 }
 
-// Dream routine funtion
-
-void	dream(t_philo *philo)
-{
-	print_message("is sleeping", philo, philo->id);
-	ft_usleep(philo->time_to_sleep);
-}
-
-// Eat routine funtion
-
-void	eat(t_philo *philo)
-{
-	pthread_mutex_lock(philo->r_fork);
-	print_message("has taken a fork", philo, philo->id);
-	if (philo->num_of_philos == 1)
-	{
-		ft_usleep(philo->time_to_die);
-		pthread_mutex_unlock(philo->r_fork);
-		return ;
-	}
-	pthread_mutex_lock(philo->l_fork);
-	print_message("has taken a fork", philo, philo->id);
-//	philo->eating = 1;
-	print_message("is eating", philo, philo->id);
-	pthread_mutex_lock(philo->meal_lock);
-	philo->last_meal = ft_timestamp();
-	philo->meals_eaten++;
-	pthread_mutex_unlock(philo->meal_lock);
-	ft_usleep(philo->time_to_eat);
-//	philo->eating = 0;
-	pthread_mutex_unlock(philo->l_fork);
-	pthread_mutex_unlock(philo->r_fork);
-}
 //mine sort of (one up top is better)
-/*void	eat(t_philo *philo)
+void	eat(t_philo *philo)
 {
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
@@ -148,8 +110,11 @@ void	*philo_routine(void *pointer)
 	while (!dead_loop(philo))
 	{
 		eat(philo);
-		dream(philo);
-		think(philo);
+//		dream(philo);
+		print_message("is sleeping", philo, philo->id);
+		ft_usleep(philo->time_to_sleep);
+		print_message("is thinking", philo, philo->id);
+//		think(philo);
 	}
 	return (pointer);
 }
@@ -182,3 +147,43 @@ int	thread_create(t_program *program, pthread_mutex_t *forks)
 	}
 	return (0);
 }
+
+/////////theirs
+/*void	think(t_philo *philo)
+{
+	print_message("is thinking", philo, philo->id);
+}*/
+
+// Eat routine funtion
+
+void	eat(t_philo *philo)
+{
+	pthread_mutex_lock(philo->r_fork);
+	print_message("has taken a fork", philo, philo->id);
+	if (philo->num_of_philos == 1)
+	{
+		ft_usleep(philo->time_to_die);
+		pthread_mutex_unlock(philo->r_fork);
+		return ;
+	}
+	pthread_mutex_lock(philo->l_fork);
+	print_message("has taken a fork", philo, philo->id);
+//	philo->eating = 1;
+	print_message("is eating", philo, philo->id);
+	pthread_mutex_lock(philo->meal_lock);
+	philo->last_meal = ft_timestamp();
+	philo->meals_eaten++;
+	pthread_mutex_unlock(philo->meal_lock);
+	ft_usleep(philo->time_to_eat);
+//	philo->eating = 0;
+	pthread_mutex_unlock(philo->l_fork);
+	pthread_mutex_unlock(philo->r_fork);
+}
+
+// Dream routine funtion
+/*
+void	dream(t_philo *philo)
+{
+	print_message("is sleeping", philo, philo->id);
+	ft_usleep(philo->time_to_sleep);
+}*/
