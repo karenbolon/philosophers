@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 12:07:21 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 10:31:59 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:05:27 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	init_input(t_philo *philos, char **list)
 
 //struct initialises philosopher structs and fills variables
 //if philo id = 0, the right fork is total number of philos - 1
-void	init_philos(t_philo *philos, t_general *program, \
+void	init_philos(t_philo *philos, t_general *restuarant, \
 			pthread_mutex_t *forks, char **list)
 {
 	int		i;
@@ -36,24 +36,23 @@ void	init_philos(t_philo *philos, t_general *program, \
 	{
 		init_input(&philos[i], list);
 		philos[i].id = i + 1;
-		philos[i].eating = 0;
-		philos[i].meals_eaten = 0;//
+		philos[i].meals_eaten = 0;
 		philos[i].start_time = ft_timestamp();
 		philos[i].last_meal = ft_timestamp();
-		philos[i].write_lock = &program->write_lock;
-		philos[i].dead_lock = &program->dead_lock;
-		philos[i].meal_lock = &program->meal_lock;
-		philos[i].dead = &program->dead_flag;
-		philos[i].l_fork = &forks[i];
+		philos[i].write_lock = &restuarant->write_lock;
+		philos[i].dead_lock = &restuarant->dead_lock;
+		philos[i].meal_lock = &restuarant->meal_lock;
+		philos[i].dead = &restuarant->dead_flag;
+		philos[i].left_fork = &forks[i];
 		if (i == 0)
-			philos[i].r_fork = &forks[philos[i].num_of_philos - 1];
+			philos[i].right_fork = &forks[philos[i].num_of_philos - 1];
 		else
-			philos[i].r_fork = &forks[i - 1];
+			philos[i].right_fork = &forks[i - 1];
 		i++;
 	}
 }
 
-void	init_general(t_general *program, t_philo *philos, \
+void	init_general(t_general *restuarant, t_philo *philos, \
 			pthread_mutex_t *forks, int count)
 {
 	int	i;
@@ -64,11 +63,11 @@ void	init_general(t_general *program, t_philo *philos, \
 		pthread_mutex_init(&forks[i], NULL);
 		i++;
 	}
-	program->dead_flag = 0;
-	program->philos = philos;
-	pthread_mutex_init(&program->write_lock, NULL);
-	pthread_mutex_init(&program->dead_lock, NULL);
-	pthread_mutex_init(&program->meal_lock, NULL);
+	restuarant->dead_flag = 0;
+	restuarant->philos = philos;
+	pthread_mutex_init(&restuarant->write_lock, NULL);
+	pthread_mutex_init(&restuarant->dead_lock, NULL);
+	pthread_mutex_init(&restuarant->meal_lock, NULL);
 }
 
 int	thread_create(t_general *restaurant, pthread_mutex_t *forks)

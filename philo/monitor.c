@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:11:21 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 10:32:25 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:24:00 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ int	check_if_dead(t_philo *philos)
 	while (i < philos[0].num_of_philos)
 	{
 		pthread_mutex_lock(philos[i].meal_lock);
-		if (ft_timestamp() - philos[i].last_meal >= philos[i].time_to_die
-			&& philos[i].eating == 0)
+		if (ft_timestamp() - philos[i].last_meal >= philos[i].time_to_die)
 		{
 			print_message("died", &philos[i]);
 			pthread_mutex_unlock(philos[i].meal_lock);
@@ -38,7 +37,7 @@ int	check_if_dead(t_philo *philos)
 }
 
 //checks if all philos have reached specified num of meals (if given)
-int	check_if_all_ate(t_philo *philos)
+int	check_if_all_full(t_philo *philos)
 {
 	int	i;
 	int	done;
@@ -72,9 +71,20 @@ void	*monitor(void *arg)
 	philos = (t_philo *)arg;
 	while (1)
 	{
-		if (check_if_dead(philos) == 1 || check_if_all_ate(philos) == 1)
+		if (check_if_dead(philos) == 1 || check_if_all_full(philos) == 1)
 			break ;
 	}
 	return (arg);
 }
 
+int	check_for_dead_philos(t_philo *philo)
+{
+	pthread_mutex_lock(philo->dead_lock);
+	if (*philo->dead == 1)
+	{
+		pthread_mutex_unlock(philo->dead_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(philo->dead_lock);
+	return (0);
+}

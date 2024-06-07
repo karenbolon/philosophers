@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 16:40:31 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 10:11:31 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/07 14:24:26 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,26 +36,15 @@ int	ft_usleep(int time)
 	return (0);
 }
 
-//print message checks if philo is dead and if so, prints
 void	print_message(char *s, t_philo *philo)
 {
 	int	time;
 
 	pthread_mutex_lock(philo->write_lock);
 	time = ft_timestamp() - philo->start_time;
-	if (!dead_loop(philo))
+	if (!check_for_dead_philos(philo))
 		printf("%i %i %s\n", time, philo->id, s);
 	pthread_mutex_unlock(philo->write_lock);
-}
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
 }
 
 void	ft_exit(t_general *table, pthread_mutex_t *forks)
