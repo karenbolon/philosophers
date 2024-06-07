@@ -6,13 +6,13 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:52:01 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 10:33:38 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/07 10:38:41 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	eat(t_philo *philo)
+/*void	eat(t_philo *philo)
 {
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
@@ -51,10 +51,10 @@ void	ft_eat_more(t_philo *philo, pthread_mutex_t	*first_fork, \
 	ft_usleep(philo->time_to_eat);
 	pthread_mutex_unlock(second_fork);
 	pthread_mutex_unlock(first_fork);
-}
+}*/
 
 //mine sort of (one up top is better)
-/*void	eat(t_philo *philo)
+void	eat(t_philo *philo)
 {
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
@@ -87,7 +87,7 @@ void	ft_eat_more(t_philo *philo, pthread_mutex_t	*first_fork, \
 	ft_usleep(philo->time_to_eat);
 	pthread_mutex_unlock(second_fork);
 	pthread_mutex_unlock(first_fork);
-}*/
+}
 
 int	dead_loop(t_philo *philo)
 {
