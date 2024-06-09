@@ -6,12 +6,17 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:52:01 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 14:03:49 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/09 22:37:42 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+/*picking up forks by id numbers (even vs odd) leads to deadlock 
+(if all pick up 1 fork and wait for 2nd) or starvation situation.
+Philos eat based on id's & always picks up the lowest # fork
+Even id's sleep immediately, which staggers the eating attempts
+*/
 void	philo_is_eating(t_philo *philo)
 {
 	pthread_mutex_t	*first_fork;
@@ -19,13 +24,13 @@ void	philo_is_eating(t_philo *philo)
 
 	if (philo->id % 2 == 0)
 	{
-		first_fork = philo->right_fork;
-		second_fork = philo->left_fork;
+		first_fork = philo->left_fork;
+		second_fork = philo->right_fork;
 	}
 	else
 	{
-		first_fork = philo->left_fork;
-		second_fork = philo->right_fork;
+		first_fork = philo->right_fork;
+		second_fork = philo->left_fork;
 	}
 	pthread_mutex_lock(first_fork);
 	print_message("has taken a fork", philo);
@@ -59,6 +64,8 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
+		ft_usleep(10);
+	else
 		ft_usleep(1);
 	while (!check_for_dead_philos(philo))
 	{

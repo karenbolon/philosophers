@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:11:21 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 14:24:00 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/09 22:29:38 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	*monitor(void *arg)
 	{
 		if (check_if_dead(philos) == 1 || check_if_all_full(philos) == 1)
 			break ;
+		usleep(1000);
 	}
 	return (arg);
 }

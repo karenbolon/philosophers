@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 16:40:31 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/07 14:24:26 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/09 22:37:08 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,20 @@ int	ft_timestamp(void)
 		time = time_var.tv_sec * 1000 + time_var.tv_usec / 1000;
 	return (time);
 }
-
+/*
+records current time, sleeps every 100 milliseconds so a
+check can be performed ("thread wakes up often to check status")
+*/
 int	ft_usleep(int time)
 {
 	int	start;
 
 	start = ft_timestamp();
 	while ((ft_timestamp() - start) < time)
-		usleep(500);
+		usleep(10);
 	return (0);
 }
+
 
 void	print_message(char *s, t_philo *philo)
 {
@@ -46,6 +50,7 @@ void	print_message(char *s, t_philo *philo)
 		printf("%i %i %s\n", time, philo->id, s);
 	pthread_mutex_unlock(philo->write_lock);
 }
+
 
 void	ft_exit(t_general *table, pthread_mutex_t *forks)
 {
