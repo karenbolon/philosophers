@@ -6,7 +6,7 @@
 /*   By: kbolon <kbolon@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/12 13:52:01 by kbolon            #+#    #+#             */
-/*   Updated: 2024/06/09 22:37:42 by kbolon           ###   ########.fr       */
+/*   Updated: 2024/06/10 11:49:59 by kbolon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		ft_usleep(10);
-	else
+		ft_usleep(philo->time_to_sleep);
+	else if (philo->id % philo->num_of_philos != 0)
 		ft_usleep(1);
 	while (!check_for_dead_philos(philo))
 	{
